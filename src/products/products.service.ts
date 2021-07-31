@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from './products.model';
+import { Product } from './interface/products.inteface';
+import { ProductDto } from './dto/products.dto';
 
 @Injectable()
 export class ProductsService {
-    private products: Product[] = [];
-
     constructor(@InjectModel('Product') private readonly productModel: Model<Product>) { }
 
     private async findProduct(id: string): Promise<Product> {
@@ -22,33 +21,33 @@ export class ProductsService {
         return product;
     }
 
-    async insertProducts(title: string, description: string, price: number): Promise<string> {
-        const newProduct = new this.productModel({ title, description, price });
+    async insertProducts(product: ProductDto): Promise<string> {
+        const newProduct = new this.productModel(product);
         const saveResult = await newProduct.save();
         return saveResult.id as string;
     }
 
     async getAllProducts() {
         const products = await this.productModel.find().exec();
-        return products.map(product => ({ id: product.id, title: product.title, description: product.description, price: product.price }));
+        return products.map(product => product);
     }
 
     async getSingleProduct(id: string) {
         const product = await this.findProduct(id);
-        return { id: product.id, title: product.title, description: product.description, price: product.price }
+        return product
     }
 
 
-    async updateProduct(id: string, title: string, description: string, price: number) {
-        const updatedProduct = await this.findProduct(id);
-        if (title) {
-            updatedProduct.title = title
+    async updateProduct(product: ProductDto) {
+        const updatedProduct = await this.findProduct(product.id);
+        if (product.title) {
+            updatedProduct.title = product.title
         }
-        if (description) {
-            updatedProduct.description = description
+        if (product.description) {
+            updatedProduct.description = product.description
         }
-        if (price) {
-            updatedProduct.price = price
+        if (product.price) {
+            updatedProduct.price = product.price
         }
         updatedProduct.save()
         return null
