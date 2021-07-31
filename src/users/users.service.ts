@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { generatePassword } from './../utils/bscrypt';
 import { UserDto } from './dto/users.dto';
 import { User } from './interface/users.inteface';
+import { validateEmail } from './schema/users.schema';
 
 @Injectable()
 export class UsersService {
@@ -22,13 +23,13 @@ export class UsersService {
         return user;
     }
 
-    async insertUsers(username: string, password: string): Promise<any> {
+    async insertUsers(username: string, password: string, email: string): Promise<any> {
         const isExistsUsername = await this.userModel.findOne({ username: username });
         if (isExistsUsername) {
             throw new ConflictException("The usename already exist")
         } else {
             const hashedPassword = await generatePassword(password);
-            const newUser = await new this.userModel({ username, password: hashedPassword });
+            const newUser = await new this.userModel({ username, password: hashedPassword, email });
             const saveResult = await newUser.save();
             return saveResult.id as string;
         }
@@ -51,6 +52,9 @@ export class UsersService {
         if (user.password) {
             const hashedPassword = await generatePassword(user.password);
             updatedUser.password = hashedPassword;
+        }
+        if (user.email && validateEmail(user.email)) {
+            updatedUser.email = user.email;
         }
         updatedUser.save()
         return null

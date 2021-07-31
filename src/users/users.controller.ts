@@ -10,7 +10,7 @@ export class UsersController {
     async addUsers(
         @Body() user: UserDto
     ) {
-        const generatedId = await this.usersService.insertUsers(user.username, user.password)
+        const generatedId = await this.usersService.insertUsers(user.username, user.password, user.email)
         return { id: generatedId };
     }
     @Get()
