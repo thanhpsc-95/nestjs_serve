@@ -1,8 +1,8 @@
-import { Document } from "mongoose";
+import { Document } from 'mongoose';
 
 export interface User extends Document {
-    id: string;
-    username: string;
-    password: string;
-    email: string;
+  id: string;
+  username: string;
+  password: string;
+  email: string;
 }
