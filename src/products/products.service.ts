@@ -39,11 +39,10 @@ export class ProductsService {
   }
 
   async getSingleProduct(id: string) {
-    const product = await this.findProduct(id);
-    return product;
+    return await this.findProduct(id);
   }
 
-  async updateProduct(product: ProductDto) {
+  async updateProduct(product: ProductDto): Promise<Product> {
     const updatedProduct = await this.findProduct(product.id);
     if (product.title) {
       updatedProduct.title = product.title;
@@ -54,8 +53,7 @@ export class ProductsService {
     if (product.price) {
       updatedProduct.price = product.price;
     }
-    updatedProduct.save();
-    return null;
+    return await updatedProduct.save();
   }
 
   async deleteProduct(prodId: string) {
