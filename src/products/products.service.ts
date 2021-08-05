@@ -33,16 +33,16 @@ export class ProductsService {
     return saveResult.id as string;
   }
 
-  async getAllProducts() {
+  async getAllProducts(): Promise<Product[] | undefined> {
     const products = await this.productModel.find().exec();
-    return products.map((product) => product);
+    return products;
   }
 
-  async getSingleProduct(id: string) {
+  async getSingleProduct(id: string): Promise<Product | undefined> {
     return await this.findProduct(id);
   }
 
-  async updateProduct(product: ProductDto): Promise<Product> {
+  async updateProduct(product: ProductDto): Promise<Product | undefined> {
     const updatedProduct = await this.findProduct(product.id);
     if (product.title) {
       updatedProduct.title = product.title;
